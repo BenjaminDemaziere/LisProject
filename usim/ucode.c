@@ -757,8 +757,7 @@ write_a_mem(int loc, unsigned int v)
 	a_memory[loc] = v;
 }
 
-inline unsigned int
-read_a_mem(int loc)
+unsigned int read_a_mem(int loc)
 {
 	return a_memory[loc];
 }

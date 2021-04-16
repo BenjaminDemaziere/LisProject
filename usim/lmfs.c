@@ -323,7 +323,7 @@ dumpmem(/*int dbg_level, */char *ptr, int len)
 }
 
 int
-read_block(int fd, int block_no, unsigned char *buf)
+read_block(int fd, int block_no, char *buf)
 {
 	off_t offset, ret;
 	int size;

@@ -77,7 +77,7 @@ a disk image partition table and make a new disk using a template file.
 
 The distributed disk was made using "template.disk1".  The template file
 basically feeds all the parameters to diskmaker to build a valid disk
-image an populate it with microcode and a load band.
+image and populate it with microcode and a load band.
 
 
 Running
@@ -115,7 +115,7 @@ You can make a warm start state file with
 
 	./usim -S
 
-Run the emulator, enter the date and time.  The ^C twice.  The memory state
+Run the emulator, enter the date and time.  Then ^C twice.  The memory state
 will be saved in "usim.state".  You can then warm start to come up
 quickly
 
@@ -164,11 +164,6 @@ onto the lispm keyboard.
 
 Some default keys:
 
-f1	terminal
-f2	system
-f3	network
-f4	abort
-f5	clear_input
 esc	Alt Mode
 f1	Terminal
 f2	System

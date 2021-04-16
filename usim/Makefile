@@ -70,14 +70,14 @@ ifeq ($(OS), LINUX)
 #CFLAGS= -O3 -march=pentium3 -mfpmath=sse -mmmx -msse $(DEFINES) -Walle
 #CFLAGS = -O3 -fomit-frame-pointer -mcpu=i686 -g $(DEFINES)
 #CFLAGS= -O3 -mfpmath=sse -mmmx -msse $(DEFINES) -Walle
-CFLAGS = -O3 -mfpmath=sse -mmmx -msse $(DEFINES) -Walle $(M32) -g
+CFLAGS = -O3 -mfpmath=sse -mmmx -msse $(DEFINES) -Wall $(M32) -g
 LFLAGS = $(M32) -L/usr/lib
 endif
 
 # override above if 64 bit
 ifeq ($(MACH_NAME), x86_64)
 M32 = -m32
-USIM_LIBS = /usr/lib/libSDL-1.2.so.0.7.0 -lpthread
+USIM_LIBS = /usr/lib/i386-linux-gnu/libSDL-1.2.so.0.11.4 -lpthread
 endif
 
 #DEFINES=-DLASHUP

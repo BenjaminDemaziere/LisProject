@@ -52,14 +52,12 @@ struct timeval tv1;
  * simple wall clock timing to get a notion of the basic cycle time
  */
 
-void
-timing_start()
+void timing_start()
 {
 	gettimeofday(&tv1, NULL);
 }
 
-void
-timing_stop()
+void timing_stop()
 {
 	struct timeval tv2, td;
 	double t, cps;
@@ -89,14 +87,12 @@ timing_stop()
 	printf("%.0f ns/cycle\n", (t / cycles) * 1000.0 * 1000.0 * 1000.0);
 }
 
-void
-sigint_handler(int arg)
+void sigint_handler(int arg)
 {
 	run_ucode_flag = 0;
 }
 
-void
-sighup_handler(int arg)
+void sighup_handler(int arg)
 {
 //	char *b = "XMMUL";
 //	char *b = "FMPY";
@@ -107,8 +103,7 @@ sighup_handler(int arg)
 	trace_late_set = 1;
 }
 
-void
-signal_init(void)
+void signal_init(void)
 {
 	signal(SIGINT, sigint_handler);
 #ifndef _WIN32
@@ -116,16 +111,14 @@ signal_init(void)
 #endif
 }
 
-void
-signal_shutdown(void)
+void signal_shutdown(void)
 {
     signal(SIGINT, SIG_DFL);
     fflush(stdout);
 }
 
 
-void
-usage(void)
+void usage(void)
 {
 	fprintf(stderr, "usage:\n");
 	fprintf(stderr, "-a		use alternate prom file\n");
@@ -155,8 +148,7 @@ extern char *optarg;
 extern int trace;
 extern int trace_mcr_labels_flag;
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	int c;
 
