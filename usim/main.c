@@ -199,15 +199,32 @@ int main(int argc, char *argv[])
 			trace = 1;
 			break;
 		case 'T':
-			switch (optarg[0]) {
-			case 'd': trace_disk_flag = 1; break;
-			case 'i': trace_int_flag = 1; break;
-			case 'o': trace_io_flag = 1; break;
-			case 'p': trace_prom_flag = 1; break;
-			case 'c': trace_mcr_flag = 1; break;
-			case 'm': trace_mcr_labels_flag = 1; break;
-			case 'n': trace_net_flag = 1; break;
-			case 'l': trace_lod_labels_flag = 1; break;
+			switch (optarg[0])
+			{
+				case 'd':
+					trace_disk_flag = 1;
+					break;
+				case 'i':
+					trace_int_flag = 1;
+					break;
+				case 'o':
+					trace_io_flag = 1;
+					break;
+				case 'p':
+					trace_prom_flag = 1;
+					break;
+				case 'c':
+					trace_mcr_flag = 1;
+					break;
+				case 'm':
+					trace_mcr_labels_flag = 1;
+					break;
+				case 'n':
+					trace_net_flag = 1;
+					break;
+				case 'l':
+					trace_lod_labels_flag = 1;
+					break;
 			}
 			break;
 		case 's':

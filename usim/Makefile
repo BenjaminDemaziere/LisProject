@@ -67,9 +67,9 @@ endif
 ifeq ($(OS), LINUX)
 #CFLAGS = -g
 #CFLAGS = -O -pg -g -fprofile-arcs
-#CFLAGS= -O3 -march=pentium3 -mfpmath=sse -mmmx -msse $(DEFINES) -Walle
+#CFLAGS= -O3 -march=pentium3 -mfpmath=sse -mmmx -msse $(DEFINES) -Wall
 #CFLAGS = -O3 -fomit-frame-pointer -mcpu=i686 -g $(DEFINES)
-#CFLAGS= -O3 -mfpmath=sse -mmmx -msse $(DEFINES) -Walle
+#CFLAGS= -O3 -mfpmath=sse -mmmx -msse $(DEFINES) -Wall
 CFLAGS = -O3 -mfpmath=sse -mmmx -msse $(DEFINES) -Wall $(M32) -g
 LFLAGS = $(M32) -L/usr/lib
 endif
@@ -89,7 +89,7 @@ SRC = $(USIM_SRC) $(DISPLAY_SRC) $(KEYBOARD_SRC)
 all: usim readmcr diskmaker lod lmfs
 
 usim: $(USIM_OBJ)
-	$(CC) -o usim $(LFLAGS) $(USIM_OBJ) $(USIM_LIBS)
+	$(CC) -o usim.exe $(LFLAGS) $(USIM_OBJ) $(USIM_LIBS)
 
 run:
 	./usim >xx
