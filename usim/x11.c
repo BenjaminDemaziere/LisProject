@@ -84,18 +84,15 @@ static void x11_process_key(XEvent *e, int updown)
 		extra |= 3 << 10;
 
 	if (updown) {
-		ret = XLookupString(&e->xkey, (char *) buffer, 5, &keysym,
-				    &status);
+		ret = XLookupString(&e->xkey, (char *) buffer, 5, &keysym, &status);
 #if 1
-		printf("keysym %d, scancode %x, sym %s, state %x\n",
-		       keysym, e->xkey.keycode, buffer, e->xkey.state);
+		printf("keysym %d, scancode %x, sym %s, state %x\n", keysym, e->xkey.keycode, buffer, e->xkey.state);
 #endif
 		iob_sdl_key_event(keysym, extra);
 	}
 }
 
-void
-display_poll(void)
+void display_poll(void)
 {
 	XEvent e;
 	int mod_state;
@@ -214,8 +211,7 @@ sdl_setup_display(void)
 }
 #endif
 
-void
-video_read(int offset, unsigned int *pv)
+void video_read(int offset, unsigned int *pv)
 {
 	if (ximage) {
 		unsigned long bits;
@@ -226,7 +222,8 @@ video_read(int offset, unsigned int *pv)
 		v = offset / video_width;
 		h = offset % video_width;
 
-		if (offset > video_width*video_height) {
+		if (offset > video_width*video_height)
+		{
 			if (1) printf("video: video_read past end; "
 				      "offset %o\n", offset);
 			*pv = 0;
@@ -244,8 +241,7 @@ video_read(int offset, unsigned int *pv)
 	}
 }
 
-void
-video_write(int offset, unsigned int bits)
+void video_write(int offset, unsigned int bits)
 {
 	if (ximage) {
 		int i, h, v, n;
@@ -255,12 +251,12 @@ video_write(int offset, unsigned int bits)
 		v = offset / video_width;
 		h = offset % video_width;
 
-		if (0) printf("v,h %d,%d <- %o (offset %d)\n", v, h, bits, offset);
+		if (0)
+			printf("v,h %d,%d <- %o (offset %d)\n", v, h, bits, offset);
 
 		for (i = 0; i < 32; i++)
 		{
-			tv_bitmap[offset + i] =
-				(bits & 1) ? Black : White;
+			tv_bitmap[offset + i] = (bits & 1) ? Black : White;
 			bits >>= 1;
 		}
 
@@ -269,8 +265,7 @@ video_write(int offset, unsigned int bits)
 	}
 }
 
-int
-display_init(void)
+int display_init(void)
 {
     char *displayname;
     unsigned long bg_pixel = 0L;
@@ -294,9 +289,10 @@ display_init(void)
 
     display = XOpenDisplay(displayname);
 
-    if (display == NULL) {
-	fprintf(stderr, "usim: failed to open display.\n");
-	exit(-1);
+    if (display == NULL)
+	{
+		fprintf(stderr, "usim: failed to open display.\n");
+		exit(-1);
     }
 
     bitmap_order = BitmapBitOrder(display);
@@ -314,34 +310,32 @@ display_init(void)
 			   0, color_depth, InputOutput, visual,
 			   CWBorderPixel |  CWEventMask, &attr);
 
-    if (window == None) {
-	fprintf(stderr, "usim: failed to open window.\n");
-	exit(-1);
+    if (window == None)
+	{
+		fprintf(stderr, "usim: failed to open window.\n");
+		exit(-1);
     }
 
-    if (!XStringListToTextProperty((char **) &window_name, 1, pWindowName)) {
-	pWindowName = NULL;
-    }
-  
-    if (!XStringListToTextProperty((char **) &icon_name, 1, pIconName)) {
-	pIconName = NULL;
-    }
+    if (!XStringListToTextProperty((char **) &window_name, 1, pWindowName))0
+		pWindowName = NULL;   
 
-    if ((size_hints = XAllocSizeHints()) != NULL) {
-    
-	/* 
-	 * The window will not be resizable:
-	 */
+    if (!XStringListToTextProperty((char **) &icon_name, 1, pIconName))
+		pIconName = NULL;
 
-	size_hints->flags = PMinSize | PMaxSize;
-	size_hints->min_width = size_hints->max_width = video_width;
-	size_hints->min_height = size_hints->max_height = video_height;
+    if ((size_hints = XAllocSizeHints()) != NULL)
+	{
+		// The window will not be resizable:
+
+		size_hints->flags = PMinSize | PMaxSize;
+		size_hints->min_width = size_hints->max_width = video_width;
+		size_hints->min_height = size_hints->max_height = video_height;
     }
 
-    if ((wm_hints = XAllocWMHints()) != NULL) {
-	wm_hints->initial_state = NormalState;
-	wm_hints->input = True;
-	wm_hints->flags = StateHint | InputHint;
+    if ((wm_hints = XAllocWMHints()) != NULL)
+	{
+		wm_hints->initial_state = NormalState;
+		wm_hints->input = True;
+		wm_hints->flags = StateHint | InputHint;
     }
 
     XSetWMProperties(display, window, pWindowName, pIconName, NULL, 0,
@@ -363,14 +357,14 @@ display_init(void)
      * Wait for first Expose event to do any drawing, then flush:
      */
   
-    do {
-	XNextEvent(display, &e);
+    do
+	{
+		XNextEvent(display, &e);
     }
     while (e.type != Expose || e.xexpose.count);
 
     XFlush(display);
 
-    ximage = XCreateImage(display, visual, (unsigned)color_depth, ZPixmap, 0,
-			  (char *) tv_bitmap, video_width, video_height, 32, 0);
+    ximage = XCreateImage(display, visual, (unsigned)color_depth, ZPixmap, 0, (char *) tv_bitmap, video_width, video_height, 32, 0);
     ximage->byte_order = LSBFirst;
 }

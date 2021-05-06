@@ -74,4 +74,15 @@ extern int tracelabel_set_mcr(char *arg);
 extern int read_phy_mem(int paddr, unsigned int *pv);
 extern int write_phy_mem(int paddr, unsigned int v);
 
+/* to compile usim, I'm forced to comment the following declaration :
+
+readmcr.c: At top level:
+readmcr.c:108:1: error: conflicting types for ‘read_a_mem’
+  108 | read_a_mem(int fd, int start, int size)
+      | ^~~~~~~~~~
+In file included from readmcr.c:17:
+ucode.h:77:14: note: previous declaration of ‘read_a_mem’ was here
+   77 | unsigned int read_a_mem(int loc);
+      |              ^~~~~~~~~~
+*/
 //unsigned int read_a_mem(int loc);
