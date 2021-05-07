@@ -8,11 +8,9 @@
 
 #ifndef _USIM_ENDIAN_H_
 #define _USIM_ENDIAN_H_
-
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define __LITTLE_ENDIAN__  1
 #endif
-
 #ifdef OSX_X
 #include <CoreFoundation/CFByteOrder.h>
 #define SWAP_SHORT(x) CFSwapInt16LittleToHost(x)
@@ -24,7 +22,6 @@
 (((x) & 0x0000ff00) << 8) | \
 (((x) & 0x000000ff) << 24) )
 #endif /* def OSX */
-
 #ifdef __BIG_ENDIAN__
 #define LE_TO_SHORT(s) (SWAP_SHORT(s))
 #define LE_TO_LONG(l) (SWAP_LONG(l))
@@ -34,5 +31,4 @@
 #else
 #error "No _ENDIAN__ macro defined."
 #endif
-
 #endif

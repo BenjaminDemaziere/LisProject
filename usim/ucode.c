@@ -29,75 +29,58 @@
 
 extern ucw_t prom_ucode[512];
 static ucw_t ucode[16*1024];
-
 static unsigned int a_memory[1024];
 static unsigned int m_memory[32];
 static unsigned int dispatch_memory[2048];
-
 static unsigned int pdl_memory[1024];
 static int pdl_ptr;
 static int pdl_index;
-
 static int lc;
 //static int lc_mode_flag;
-
 static int spc_stack[32];
 static int spc_stack_ptr;
-
 struct page_s
 {
 	unsigned int w[256];
 };
 
 static struct page_s *phy_pages[16*1024];
-
 static int l1_map[2048];
 static int l2_map[1024];
-
 unsigned long cycles;
 unsigned long trace_cycles;
 unsigned long max_cycles;
 unsigned long max_trace_cycles;
-
 static int u_pc;
 static int page_fault_flag;
 static int interrupt_pending_flag;
 static int interrupt_status_reg;
-
 static int sequence_break_flag;
 static int interrupt_enable_flag;
 static int lc_byte_mode_flag;
 static int bus_reset_flag;
-
 static int prom_enabled_flag;
 int stop_after_prom_flag;
 int run_ucode_flag;
 int warm_boot_flag;
 extern int save_state_flag;
 extern int dump_state_flag;
-
 static unsigned int md;
 static unsigned int vma;
 static unsigned int q;
 static unsigned int opc;
-
 static unsigned int new_md;
 static int new_md_delay;
-
 static int write_fault_bit;
 static int access_fault_bit;
-
 static int alu_carry;
 static unsigned int alu_out;
-
 static unsigned int oa_reg_lo;
 static unsigned int oa_reg_hi;
 static int oa_reg_lo_set;
 static int oa_reg_hi_set;
-
 static int interrupt_control;
 static unsigned int dispatch_constant;
-
 int trace;
 int trace_mcr_labels_flag;
 int trace_lod_labels_flag;
@@ -109,20 +92,15 @@ int trace_disk_flag;
 int trace_net_flag;
 int trace_int_flag;
 int trace_late_set;
-
 static int macro_pc_incrs;
-
 static int phys_ram_pages;
-
 #ifdef STAT_ALU_USE
 static unsigned int alu_stat0[16], alu_stat1[16], alu_stat2[16];
 #endif
-
 void show_label_closest(unsigned int upc);
 void show_label_closest_padded(unsigned int upc);
 char *find_function_name(int the_lc);
 int restore_state(void);
-
 extern void video_read(int offset, unsigned int *pv);
 extern void video_write(int offset, unsigned int bits);
 extern void iob_unibus_read(int offset, int *pv);
@@ -131,11 +109,9 @@ extern int disk_xbus_read(int offset, unsigned int *pv);
 extern int disk_xbus_write(int offset, unsigned int v);
 extern int tv_xbus_read(int offset, unsigned int *pv);
 extern int tv_xbus_write(int offset, unsigned int v);
-
 extern void disassemble_ucode_loc(int loc, ucw_t u);
 extern int sym_find(int mcr, char *name, int *pval);
 void reset_pc_histogram(void);
-
 extern void timing_start();
 extern void timing_stop();
 extern void iob_poll();
@@ -211,7 +187,8 @@ unsigned int map_vtop(unsigned int virt, int *pl1_map, int *poffset)
 	virt &= 077777777;
 #if 0
 	/* cache */
-	if ((virt & 0xffffff00) == last_virt) {
+	if ((virt & 0xffffff00) == last_virt)
+	{
 		if (pl1_map)
 			*pl1_map = last_l1;
 		if (poffset)
@@ -237,7 +214,6 @@ unsigned int map_vtop(unsigned int virt, int *pl1_map, int *poffset)
 
 		return (1 << 22) | (1 << 23) | 036000;
 	}
-
 	/* color */
 	if ((virt & 077700000) == 077200000)
 	{
@@ -277,10 +253,8 @@ unsigned int map_vtop(unsigned int virt, int *pl1_map, int *poffset)
 	last_l1 = l1;
 	last_l2 = l2;
 #if 0
-	if ((virt & 0077777000) == 0076776000) {
-		printf("vtop: pdl? %011o l1 %d %011o l2 %d %011o\n",
-		       virt, l1_index, l1, l2_index, l2);
-	}
+	if ((virt & 0077777000) == 0076776000)
+		printf("vtop: pdl? %011o l1 %d %011o l2 %d %011o\n", virt, l1_index, l1, l2_index, l2);
 #endif
 	return l2;
 }
@@ -316,7 +290,8 @@ int add_new_page_no(int pn)
 #if 0
 	struct page_s *page;
 
-	if (0) printf("new_page %o\n", pn);
+	if (0)
+		printf("new_page %o\n", pn);
 
 	if ((page = phy_pages[pn]) == 0) {
 
@@ -332,7 +307,6 @@ int add_new_page_no(int pn)
 			return 0;
 		}
 	}
-
 	return -1;
 #else
 	struct page_s *page;
@@ -425,18 +399,15 @@ int read_mem(int vaddr, unsigned int *pv)
 	{
 		/* additional debugging, but slower */
 		int l1;
+
 		map = map_vtop(vaddr, (int *)&l1, &offset);
-		tracef("read_mem(vaddr=%o) l1_index %o, l1 %o, l2_index %o, l2 %o\n",
-		       vaddr,
-		       (vaddr >> 13) & 03777,
-		       (l1 << 5) | ((vaddr >> 8) & 037),
-		       map);
+		tracef("read_mem(vaddr=%o) l1_index %o, l1 %o, l2_index %o, l2 %o\n", vaddr, (vaddr >> 13) & 03777, \
+			(l1 << 5) | ((vaddr >> 8) & 037), map);
 	}
 #endif
 	/* 14 bit page # */
 	pn = map & 037777;
-	//tracef("read_mem(vaddr=%o) -> pn %o, offset %o, map %o (%o)\n",
-	//vaddr, pn, offset, map, 1 << 23);
+	//tracef("read_mem(vaddr=%o) -> pn %o, offset %o, map %o (%o)\n", vaddr, pn, offset, map, 1 << 23);
 	if ((map & (1 << 23)) == 0)
 	{
 		/* no access perm */
@@ -833,10 +804,9 @@ void advance_lc(int *ppc)
 	{
 		lc &= ~(1 << 31);
 		vma = old_lc >> 2;
-		// condition avec aucune action ??
 		if (read_mem(old_lc >> 2, &new_md))
 		{
-
+// condition avec aucune action ??
 		}
 		new_md_delay = 2;
 		tracef("advance_lc() read vma %011o -> %011o\n", old_lc >> 2, new_md);
@@ -1050,19 +1020,17 @@ trace_disk_flag = 1;
 		break;
 	case 021: /* VMA register, start main memory read */
 		vma = out_bus;
-		// condition avec aucune action ??
 		if (read_mem(vma, &new_md))
 		{
-
+// condition avec aucune action ??
 		}
 		new_md_delay = 2;
 		break;
 	case 022: /* VMA register, start main memory write */
 		vma = out_bus;
-		// condition avec aucune action ??
 		if (write_mem(vma, md))
 		{
-
+// condition avec aucune action ??
 		}
 		break;
 	case 023: /* VMA register, write map */
@@ -1093,8 +1061,7 @@ trace_disk_flag = 1;
 			invalidate_vtop_cache();
 #if 0
 			if (l2_index == 0) 
-				printf("l2_map[%o] <- %o\n",
-				       l2_index, l2_data);
+				printf("l2_map[%o] <- %o\n", l2_index, l2_data);
 #endif
 			tracevm("l2_map[%o] <- %o\n", l2_index, l2_data);
 			add_new_page_no(l2_data & 037777);
@@ -1106,19 +1073,17 @@ trace_disk_flag = 1;
 		break;
 	case 031:
 		md = out_bus;
-		// condition avec aucune action ??
 		if (read_mem(vma, &new_md))
 		{
-
+// condition avec aucune action ??
 		}
 		new_md_delay = 2;
 		break;
 	case 032:
 		md = out_bus;
-		// condition avec aucune action ??
 		if (write_mem(vma, md))
 		{
-
+// condition avec aucune action ??
 		}
 		break;
 	case 033: /* MD register,write map like 23 */
@@ -1427,7 +1392,6 @@ void dump_state(void)
 	for (i = 0; i < 16*1024; i++)
 		if (phy_pages[i] == 0) printf("z %o\n", i);
 #endif
-
 	int s, e;
 
 	s = -1;
@@ -2690,12 +2654,10 @@ int run(void)
 	show_pc_histogram();
 #endif
 #ifdef STAT_ALU_USE
-	{
-		int i;
-		printf("ALU op-code usage:\n");
-		for (i = 0; i < 16; i++)
-			printf("%2i %2o %08u %08u %08u\n", i, i, alu_stat0[i], alu_stat1[i], alu_stat2[i]);
-	}
+	int i;
+	printf("ALU op-code usage:\n");
+	for (i = 0; i < 16; i++)
+		printf("%2i %2o %08u %08u %08u\n", i, i, alu_stat0[i], alu_stat1[i], alu_stat2[i]);
 #endif
 	return 0;
 }

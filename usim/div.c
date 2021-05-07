@@ -28,10 +28,7 @@ DIV2	((A-TEM1) XOR M-2 A-TEM1)	;IF SIGNS OF DIVIDEND AND DIVISOR ARE DIFFERENT,
 
 int show = 1;
 
-void ud(unsigned int dividend,
-		     unsigned int divisor,
-		     unsigned int *pquotient,
-		     unsigned int *premainder )
+void ud(unsigned int dividend, unsigned int divisor, unsigned int *pquotient, unsigned int *premainder )
 {
 	unsigned int q, m, a, alu, old_q;
 	int i;
@@ -43,44 +40,39 @@ void ud(unsigned int dividend,
 	m = 0;
 	negq = 0;
 	nega = 0;
-
 	printf("(/ 0x%x (%o) 0x%x (%o) ); ", q, q, a, a);
-
-	if ((int)q < 0) {
+	if ((int)q < 0)
+	{
 		q = -(int)q;
 		negq = 1;
 	}
-
-	if ((int)a < 0) {
+	if ((int)a < 0)
 		nega = 1;
-	}
 
-	if (show) printf("\n");
+	if (show)
+		printf("\n");
 
 	alu = m - a;
-
-old_q = q;
+	old_q = q;
 	q <<= 1;
 	if ((alu & 0x80000000) == 0)
 		q |= 1;
+	
 //	m = (alu << 1) | ((q & 0x80000000) ? 1 : 0);
 	m = (alu << 1) | ((old_q & 0x80000000) ? 1 : 0);
 
-	for (i = 0; i < 32; i++) {
-
+	for (i = 0; i < 32; i++)
+	{
 		do_sub = q & 1;
-
 		if (show)
-		printf("loop %d, m %08x (%o) alu %08x (%o), q %08x (%o), do_sub %d\n",
-		       i, m, m, alu, alu, q, q, do_sub);
+			printf("loop %d, m %08x (%o) alu %08x (%o), q %08x (%o), do_sub %d\n", i, m, m, alu, alu, q, q, do_sub);
 
-		if (do_sub) {
+		if (do_sub)
 			alu = m - a;
-		} else {
+		else
 			alu = m + a;
-		}
 
-old_q = q;
+		old_q = q;
 		q <<= 1;
 		if ((alu & 0x80000000) == 0)
 			q |= 1;
@@ -91,30 +83,26 @@ old_q = q;
 		else
 			m = alu;
 	}
-
 	do_sub = q & 1;
-
 	if (nega)
 		do_sub = !do_sub;
 
 	if (show)
-	printf("remainder; m %08x, alu %08x, q %08x, do_sub %d\n", m, alu, q, do_sub);
+		printf("remainder; m %08x, alu %08x, q %08x, do_sub %d\n", m, alu, q, do_sub);
 
-	if (do_sub) {
+	if (do_sub)
 		/* setm */
 		printf("setm; ");
-	} else {
+	else
 		alu = m + a;
-	}
 
-	if (negq ^ nega) {
+	if (negq ^ nega)
+	{
 		printf("diff; ");
 		q = -(int)q;
 	}
-
 	printf("done; alu %08x (%o), q %08x (%o) (%d,%d)\n", alu, alu, q, q, alu, q);
 }
-
 
 main()
 {
@@ -124,35 +112,27 @@ main()
 	ud(4, 2, &q, &r);
 #if 1
 	ud(10, 3, &q, &r);
-
 	ud(8, 2, &q, &r);
-
 	ud(10, 5, &q, &r);
-
 //	ud(100, 3, &q, &r);
-
 //	ud(0503, 021, &q, &r);
 	ud(06434, 0503, &q, &r);
 	ud(0136, 021, &q, &r);
-
 	ud(0142, 021, &q, &r);
-
 	ud(0x7fffffff, 02, &q, &r);
 	ud(-1, 2, &q, &r);
-
 	ud(-6, 2, &q, &r);
 //	show=1;
 	ud(-6, -2, &q, &r);
 	ud(6, 2, &q, &r);
 #endif
-
 #if 0
 	int i;
-	for (i = 0; i < 0200; i++) {
+
+	for (i = 0; i < 0200; i++)
+	{
 		printf("%o / 021 ", i);
 		ud(i, 021, &q, &r);
 	}
 #endif
 }
-
-

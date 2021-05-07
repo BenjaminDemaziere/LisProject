@@ -67,9 +67,9 @@ endif
 ifeq ($(OS), LINUX)
 #CFLAGS = -g
 #CFLAGS = -O -pg -g -fprofile-arcs
-#CFLAGS= -O3 -march=pentium3 -mfpmath=sse -mmmx -msse $(DEFINES) -Wall
+#CFLAGS = -O3 -march=pentium3 -mfpmath=sse -mmmx -msse $(DEFINES) -Wall
 #CFLAGS = -O3 -fomit-frame-pointer -mcpu=i686 -g $(DEFINES)
-#CFLAGS= -O3 -mfpmath=sse -mmmx -msse $(DEFINES) -Wall
+#CFLAGS = -O3 -mfpmath=sse -mmmx -msse $(DEFINES) -Wall
 CFLAGS = -O3 -mfpmath=sse -mmmx -msse $(DEFINES) -Wall $(M32) -g
 LFLAGS = $(M32) -L/usr/lib
 endif
@@ -83,7 +83,6 @@ endif
 #DEFINES=-DLASHUP
 
 USIM_OBJ = $(USIM_SRC:.c=.o) $(DISPLAY_SRC:.c=.o) $(KEYBOARD_SRC:.c=.o)
-
 SRC = $(USIM_SRC) $(DISPLAY_SRC) $(KEYBOARD_SRC)
 
 all: usim readmcr diskmaker lod lmfs
@@ -109,5 +108,3 @@ lod: lod.c macro.c
 clean:
 	rm -f *.o usim lod readmcr diskmaker lmfs xx
 	rm -f *~
-
-

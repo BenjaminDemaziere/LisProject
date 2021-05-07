@@ -1,5 +1,6 @@
 /* XPM */
-static char *logo_xpm[] = {
+static char *logo_xpm[] =
+{
 /* columns rows colors chars-per-pixel */
 "432 116 2 1",
 "  c #00000040",

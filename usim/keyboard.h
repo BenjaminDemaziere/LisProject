@@ -24,23 +24,18 @@
 
 /*
 keys we need to map
-
 meta <- alt
-
 top
- network
- system
- abort
- help
- end
-
+	network
+	system
+	abort
+	help
+	end
 call
 clear
-
 */
 
 #define KBD_CONFIG_FILE "keyboard.cfg"
-
 /* all-up shift codes */
 #define KB_ALLUP_SHIFT 1
 #define KB_ALLUP_GREEK (1<<1)
@@ -53,7 +48,6 @@ clear
 #define KB_ALLUP_ALTLOCK (1<<8)
 #define KB_ALLUP_MODELOCK (1<<9)
 #define KB_ALLUP_REPEAT (1<<10)
-
 /* Shift codes */
 #define KB_SH_LEFT_SHIFT 024
 #define KB_SH_LEFT_GREEK 044
@@ -72,7 +66,6 @@ clear
 #define KB_SH_CAPSLOCK 0125
 #define KB_SH_ALTLOCK 015
 #define KB_SH_MODELOCK 03
-
 #define LM_K_ALTMODE 033
 #define LM_K_BREAK 0201 
 #define LM_K_CLEAR_INPUT 0202
@@ -106,63 +99,63 @@ clear
 #define LM_K_SYSTEM 0235 
 #define LM_K_NETWORK 0236 
 
-struct lmkey {
-  char *lmkey_name;
-  unsigned char lmkey_num;
-  char lmkey_is_shift;
-} lm_key_names[] = {
-  { "Left_Shift", 024, 1},
-  { "Left_Greek", 044, 1 },
-  { "Left_Top", 0104, 1 },
-  { "Left_Control", 020, 1 },
-  { "Left_Meta", 045, 1 },
-  { "Left_Super", 05, 1 },
-  { "Left_Hyper", 0145, 1 },
-  { "Right_Shift", 025, 1 },
-  { "Right_Greek", 035, 1 },
-  { "Right_Top", 0155, 1 },
-  { "Right_Control", 026, 1 },
-  { "Right_Meta", 0165, 1 },
-  { "Right_Super", 065, 1 },
-  { "Right_Hyper", 0175, 1 },
-  { "Caps", 0125, 1 },
-  { "Altlock", 015, 1 },
-  { "Modelock", 03, 1 },
-
-  { "Altmode", 033 },
-  { "Break", 0201  },
-  { "Clear_Input", 0202 },
-  { "Call", 0203  },
-  { "Terminal", 0204  },
-  { "Macro", 0205  },
-  { "Help", 0206  },
-  { "Rubout", 0207  },
-  { "Overstrike", 0210  },
-  { "Tab", 0211  },
-  { "Line", 0212  },
-  { "Delete", 0213  },
-  { "Page", 0214  },
-  { "Clear_Screen", 0214  },
-  { "Return", 0215  },
-  { "Quote", 0216  },
-  { "Hold_Output", 0217  },
-  { "Stop_Output", 0220 },
-  { "Abort", 0221  },
-  { "Resume", 0222  },
-  { "Status", 0223  },
-  { "End", 0224  },
-  { "Roman_I", 0225  },
-  { "Roman_II", 0226  },
-  { "Roman_III", 0227  },
-  { "Roman_IV", 0230  },
-  { "Hand_Up", 0231  },
-  { "Hand_Down", 0232  },
-  { "Hand_Left", 0233  },
-  { "Hand_Right", 0234  },
-  { "System", 0235  },
-  { "Network", 0236 },
-
-  { NULL, -1 }
+struct lmkey
+{
+	char *lmkey_name;
+	unsigned char lmkey_num;
+	char lmkey_is_shift;
+} lm_key_names[] =
+{
+	{ "Left_Shift", 024, 1},
+	{ "Left_Greek", 044, 1 },
+	{ "Left_Top", 0104, 1 },
+	{ "Left_Control", 020, 1 },
+	{ "Left_Meta", 045, 1 },
+	{ "Left_Super", 05, 1 },
+	{ "Left_Hyper", 0145, 1 },
+	{ "Right_Shift", 025, 1 },
+	{ "Right_Greek", 035, 1 },
+	{ "Right_Top", 0155, 1 },
+	{ "Right_Control", 026, 1 },
+	{ "Right_Meta", 0165, 1 },
+	{ "Right_Super", 065, 1 },
+	{ "Right_Hyper", 0175, 1 },
+	{ "Caps", 0125, 1 },
+	{ "Altlock", 015, 1 },
+	{ "Modelock", 03, 1 },
+	{ "Altmode", 033 },
+	{ "Break", 0201  },
+	{ "Clear_Input", 0202 },
+	{ "Call", 0203  },
+	{ "Terminal", 0204  },
+	{ "Macro", 0205  },
+	{ "Help", 0206  },
+	{ "Rubout", 0207  },
+	{ "Overstrike", 0210  },
+	{ "Tab", 0211  },
+	{ "Line", 0212  },
+	{ "Delete", 0213  },
+	{ "Page", 0214  },
+	{ "Clear_Screen", 0214  },
+	{ "Return", 0215  },
+	{ "Quote", 0216  },
+	{ "Hold_Output", 0217  },
+	{ "Stop_Output", 0220 },
+	{ "Abort", 0221  },
+	{ "Resume", 0222  },
+	{ "Status", 0223  },
+	{ "End", 0224  },
+	{ "Roman_I", 0225  },
+	{ "Roman_II", 0226  },
+	{ "Roman_III", 0227  },
+	{ "Roman_IV", 0230  },
+	{ "Hand_Up", 0231  },
+	{ "Hand_Down", 0232  },
+	{ "Hand_Left", 0233  },
+	{ "Hand_Right", 0234  },
+	{ "System", 0235  },
+	{ "Network", 0236 },
+	{ NULL, -1 }
 };  
 
 /* second index in kb_new_table gives which shift must be generated */
@@ -173,7 +166,8 @@ struct lmkey {
 
 /* This is generated from SI:KBD-NEW-TABLE */
 /* Key table: key -> (code, shift): */
-unsigned char kb_new_table[240][2] = {
+unsigned char kb_new_table[240][2] =
+{
     { 0133, 3 },	/* 00: Circle-dot */
     { 0053, 2 },	/* 01: Downarrow */
     { 0123, 3 },	/* 02: Alpha */
@@ -338,4 +332,3 @@ unsigned char kb_new_table[240][2] = {
     { 0042, 0 },	/* 0236: Network */
     { -1,-1 },		/* 0237: unused */
 };
-

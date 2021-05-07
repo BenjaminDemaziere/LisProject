@@ -11,12 +11,12 @@ typedef unsigned long long uint64;
 #define O_BINARY 0
 #endif /* LINUX */
 
-
 #ifdef WIN32
 typedef __int64 int64;
 typedef __int64 uint64;
 
-struct timeval {
+struct timeval
+{
 	unsigned int tv_sec;
 	unsigned int tv_usec;
 };
@@ -56,26 +56,23 @@ extern int trace_prom_flag;
 extern int trace_mcr_flag;
 extern int stop_after_prom_flag;
 extern int alt_prom_flag;
-
 extern unsigned long cycles;
 extern unsigned long max_cycles;
 extern unsigned long max_trace_cycles;
-
 extern char *sym_find_by_val(int mcr, int v);
 extern char *sym_find_last(int mcr, int v, int *poffset);
 extern char *sym_find_by_type_val(int mcr, int t, int v);
-
 extern int breakpoint_set_mcr(char *arg);
 extern int breakpoint_set_prom(char *arg);
 extern int breakpoint_set_count(int count);
-
 extern int tracelabel_set_mcr(char *arg);
-
 extern int read_phy_mem(int paddr, unsigned int *pv);
 extern int write_phy_mem(int paddr, unsigned int v);
 
 /* to compile usim, I'm forced to comment the following declaration :
+//unsigned int read_a_mem(int loc);
 
+error returned by the compiler :
 readmcr.c: At top level:
 readmcr.c:108:1: error: conflicting types for ‘read_a_mem’
   108 | read_a_mem(int fd, int start, int size)
@@ -85,4 +82,3 @@ ucode.h:77:14: note: previous declaration of ‘read_a_mem’ was here
    77 | unsigned int read_a_mem(int loc);
       |              ^~~~~~~~~~
 */
-//unsigned int read_a_mem(int loc);

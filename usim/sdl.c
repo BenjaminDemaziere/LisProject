@@ -35,7 +35,8 @@ static int video_height = VIDEO_HEIGHT;
 #define MAX_BITMAP_OFFSET	((VIDEO_WIDTH * VIDEO_HEIGHT) / 32)
 unsigned int tv_bitmap[MAX_BITMAP_OFFSET];
 
-typedef struct DisplayState {
+typedef struct DisplayState
+{
     unsigned char *data;
     int linesize;
     int depth;
@@ -43,25 +44,22 @@ typedef struct DisplayState {
     int height;
 } DisplayState;
 
-static DisplayState display_state;
-static DisplayState *ds = &display_state;
-
 #define MOUSE_EVENT_LBUTTON 1
 #define MOUSE_EVENT_MBUTTON 2
 #define MOUSE_EVENT_RBUTTON 4
 
+static DisplayState display_state;
+static DisplayState *ds = &display_state;
+
 extern void sdl_process_key(SDL_KeyboardEvent *ev, int keydown);
 extern int mouse_sync_flag;
-
 static int old_run_state;
-
 
 static void sdl_send_mouse_event(void)
 {
 	int x, y, dx, dy, state, buttons;
 
 	state = SDL_GetRelativeMouseState(&dx, &dy);
-
 	buttons = 0;
 	if (state & SDL_BUTTON(SDL_BUTTON_LEFT))
 		buttons |= MOUSE_EVENT_LBUTTON;
@@ -73,12 +71,10 @@ static void sdl_send_mouse_event(void)
 		buttons |= MOUSE_EVENT_RBUTTON;
 
 	state = SDL_GetMouseState(&x, &y);
-
 	iob_sdl_mouse_event(x, y, dx, dy, buttons);
 }
 
-void
-sdl_mouse_poll(void)
+void sdl_mouse_poll(void)
 {
   int state, x, y;
 
@@ -91,29 +87,33 @@ static void sdl_update(DisplayState *ds, int x, int y, int w, int h)
     SDL_UpdateRect(screen, x, y, w, h);
 }
 
-void
-sdl_system_shutdown_request(void)
+void sdl_system_shutdown_request(void)
 {
 	exit(0);
 }
 
 int u_minh = 0x7fffffff, u_maxh, u_minv = 0x7fffffff, u_maxv;
 
-void
-accumulate_update(int h, int v, int hs, int vs)
+void accumulate_update(int h, int v, int hs, int vs)
 {
 #if 0
 	SDL_UpdateRect(screen, h, v, 32, 1);
 #else
-	if (h < u_minh) u_minh = h;
-	if (h+hs > u_maxh) u_maxh = h+hs;
-	if (v < u_minv) u_minv = v;
-	if (v+vs > u_maxv) u_maxv = v+vs;
+	if (h < u_minh)
+		u_minh = h;
+
+	if (h+hs > u_maxh)
+		u_maxh = h+hs;
+
+	if (v < u_minv)
+		u_minv = v;
+	
+	if (v+vs > u_maxv)
+		u_maxv = v+vs;
 #endif
 }
 
-void
-send_accumulated_updates(void)
+void send_accumulated_updates(void)
 {
 	int hs, vs;
 
@@ -128,50 +128,42 @@ send_accumulated_updates(void)
 	u_maxv = 0;
 }
 
-void
-sdl_refresh(void)
+void sdl_refresh(void)
 {
 	SDL_Event ev1, *ev = &ev1;
 
-
 	send_accumulated_updates();
-
 	iob_dequeue_key_event();
-
-	while (SDL_PollEvent(ev)) {
-
-		switch (ev->type) {
-		case SDL_VIDEOEXPOSE:
-			sdl_update(ds, 0, 0, screen->w, screen->h);
-			break;
-
-		case SDL_KEYDOWN:
-			sdl_process_key(&ev->key, 1);
-			break;
-
-		case SDL_KEYUP:
-			sdl_process_key(&ev->key, 0);
-			break;
-		case SDL_QUIT:
-			sdl_system_shutdown_request();
-			break;
-		case SDL_MOUSEMOTION:
-			sdl_send_mouse_event();
-			break;
-		case SDL_MOUSEBUTTONDOWN:
-		case SDL_MOUSEBUTTONUP:
+	while (SDL_PollEvent(ev))
+	{
+		switch (ev->type)
 		{
-			/*SDL_MouseButtonEvent *bev = &ev->button;*/
-			sdl_send_mouse_event();
-		}
-		break;
-
-		case SDL_ACTIVEEVENT:
-			/* Switching between windows, assume all keys up */
-			sdl_queue_all_keys_up();
-			break;
-		default:
-			break;
+			case SDL_VIDEOEXPOSE:
+				sdl_update(ds, 0, 0, screen->w, screen->h);
+				break;
+			case SDL_KEYDOWN:
+				sdl_process_key(&ev->key, 1);
+				break;
+			case SDL_KEYUP:
+				sdl_process_key(&ev->key, 0);
+				break;
+			case SDL_QUIT:
+				sdl_system_shutdown_request();
+				break;
+			case SDL_MOUSEMOTION:
+				sdl_send_mouse_event();
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+				/*SDL_MouseButtonEvent *bev = &ev->button;*/
+				sdl_send_mouse_event();
+				break;
+			case SDL_ACTIVEEVENT:
+				/* Switching between windows, assume all keys up */
+				sdl_queue_all_keys_up();
+				break;
+			default:
+				break;
 		}
 	}
 }
@@ -181,14 +173,12 @@ static void sdl_resize(DisplayState *ds, int w, int h)
     int flags;
 
     flags = SDL_HWSURFACE|SDL_ASYNCBLIT|SDL_HWACCEL;
-
     screen = SDL_SetVideoMode(w, h, 8, flags);
-
-    if (!screen) {
+    if (!screen)
+	{
         fprintf(stderr, "Could not open SDL display\n");
         exit(1);
     }
-
     ds->data = screen->pixels;
     ds->linesize = screen->pitch;
     ds->depth = screen->format->BitsPerPixel;
@@ -201,11 +191,10 @@ static void sdl_update_caption(void)
     char buf[1024];
 
     strcpy(buf, "CADR");
-    if (run_ucode_flag) {
+    if (run_ucode_flag)
         strcat(buf, " [Running]");
-    } else {
+    else
         strcat(buf, " [Stopped]");
-    }
 
     SDL_WM_SetCaption(buf, "CADR");
 }
@@ -220,34 +209,31 @@ static void sdl_cleanup(void)
 
 char video_bow_mode = 1;	/* 1 => White on Black, 0 => Black on White */
 
-
-void
-sdl_set_bow_mode(char new_mode)
+void sdl_set_bow_mode(char new_mode)
 {
   unsigned char *p = screen->pixels;
   int i, j;
 
 #if 0
-  printf("Setting Black-on-White mode: was %d, setting %d\n",
-	 video_bow_mode, new_mode);
+	printf("Setting Black-on-White mode: was %d, setting %d\n", video_bow_mode, new_mode);
 #endif
-  if (video_bow_mode == new_mode)
-    return;
+	if (video_bow_mode == new_mode)
+		return;
 
   /* Need to complement it */
-  video_bow_mode = new_mode;
-
-  for (i = 0; i < video_width; i++)
-    for (j = 0; j < video_height; j++) {
-      *p = ~*p;
-      p++;
-    }
-
-  SDL_UpdateRect(screen, 0, 0, video_width, video_height);
+	video_bow_mode = new_mode;
+	for (i = 0; i < video_width; i++)
+	{
+    	for (j = 0; j < video_height; j++)
+		{
+			*p = ~*p;
+			p++;
+    	}
+	}
+	SDL_UpdateRect(screen, 0, 0, video_width, video_height);
 }
 
-void
-sdl_setup_display(void)
+void sdl_setup_display(void)
 {
 #if 0
 	SDL_Surface *logo;
@@ -255,11 +241,11 @@ sdl_setup_display(void)
 	unsigned char *p = screen->pixels;
 	int i, j;
 
-	for (i = 0; i < video_width; i++) {
+	for (i = 0; i < video_width; i++)
+	{
 		for (j = 0; j < video_height; j++)
 			*p++ = COLOR_WHITE;
 	}
-
 #if 0
 	logo = IMG_ReadXPMFromArray(logo_xpm);
 	SDL_BlitSurface(logo, NULL, screen, NULL);
@@ -267,9 +253,12 @@ sdl_setup_display(void)
 	{
 		char *p;
 		unsigned char *ps = screen->pixels;
-		for (j = 0; j < 116; j++) {
+
+		for (j = 0; j < 116; j++)
+		{
 			p = logo_xpm[3+j];
-			for (i = 0; i < 432; i++) {
+			for (i = 0; i < 432; i++)
+			{
 				if (p[i] != '.')
 					ps[i] = COLOR_BLACK;
 			}
@@ -277,46 +266,39 @@ sdl_setup_display(void)
 		}
 	}
 #endif
-
 	SDL_UpdateRect(screen, 0, 0, video_width, video_height);
 }
 
-void
-video_read(int offset, unsigned int *pv)
+void video_read(int offset, unsigned int *pv)
 {
 	*pv = 0;
-
 	/* the real h/w has memory for 768x1024 */
 	if (offset < MAX_BITMAP_OFFSET)
 		*pv = tv_bitmap[offset];
 }
 
-void
-video_write(int offset, unsigned int bits)
+void video_write(int offset, unsigned int bits)
 {
-	if (screen) {
+	if (screen)
+	{
 		unsigned char *ps = screen->pixels;
 		int i, h, v;
 
 		tv_bitmap[offset] = bits;
-
 		offset *= 32;
-
 		v = offset / video_width;
 		h = offset % video_width;
-
-		if (0) printf("v,h %d,%d <- %o (offset %d)\n", v, h, bits, offset);
+		if (0)
+			printf("v,h %d,%d <- %o (offset %d)\n", v, h, bits, offset);
 
 		for (i = 0; i < 32; i++)
 		{
-			ps[offset + i] =
-//				(bits & 1) ? COLOR_BLACK : COLOR_WHITE;
-				(bits & 1) ? COLOR_WHITE : COLOR_BLACK;
+			ps[offset + i] = (bits & 1) ? COLOR_WHITE : COLOR_BLACK;
+//			ps[offset + i] = (bits & 1) ? COLOR_BLACK : COLOR_WHITE;
 			if (video_bow_mode == 0)
-			  ps[offset + i] ^= ~0;
+				ps[offset + i] ^= ~0;
 			bits >>= 1;
 		}
-
 		accumulate_update(h, v, 32, 1);
 	}
 }
@@ -326,8 +308,8 @@ static void sdl_display_init(void)
     int flags;
 
     flags = SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE;
-
-    if (SDL_Init(flags)) {
+    if (SDL_Init(flags))
+	{
         fprintf(stderr, "SDL initialization failed\n");
         exit(1);
     }
@@ -335,40 +317,30 @@ static void sdl_display_init(void)
     /* NOTE: we still want Ctrl-C to work - undo the SDL redirections*/
     signal(SIGINT, SIG_DFL);
     signal(SIGQUIT, SIG_DFL);
-
     sdl_resize(ds, video_width, video_height);
-
     sdl_update_caption();
-
     SDL_EnableKeyRepeat(250, 50);
-//    SDL_EnableUNICODE(1);
-
+//  SDL_EnableUNICODE(1);
     sdl_setup_display();
-
     SDL_ShowCursor(0);
-
     atexit(sdl_cleanup);
 }
 
-int
-display_init(void)
+int display_init(void)
 {
 	sdl_display_init();
 	return 0;
 }
 
-void
-display_poll(void)
+void display_poll(void)
 {
-	if (mouse_sync_flag) {
+	if (mouse_sync_flag)
 		sdl_mouse_poll();
-	}
 
 	sdl_refresh();
-
-	if (old_run_state != run_ucode_flag) {
+	if (old_run_state != run_ucode_flag)
+	{
 		old_run_state = run_ucode_flag;
 		sdl_update_caption();
 	}
 }
-

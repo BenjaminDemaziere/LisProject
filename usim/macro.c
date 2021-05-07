@@ -4,7 +4,8 @@
  * $Id: macro.c 21 2004-10-18 23:15:49Z brad $
  */
 
-char *op_names[16] = {
+char *op_names[16] =
+{
 	"CALL",
 	"CALL0",
 	"MOVE",
@@ -23,7 +24,8 @@ char *op_names[16] = {
 	"17 UNUSED"
 };
 
-char *reg_names[] = {
+char *reg_names[] =
+{
 	"FEF",
 	"FEF+100",
 	"FEF+200", 
@@ -34,7 +36,8 @@ char *reg_names[] = {
 	"PDL"
 };
 
-char *dest_names[] = {
+char *dest_names[] =
+{
 	"IGNORE",
 	"TO STACK",
 	"TO NEXT",
@@ -53,7 +56,8 @@ char *dest_names[] = {
 	"illegal"
 };
 
-char *branch_names[] = {
+char *branch_names[] =
+{
 	"BRALW",
 	"branch-on-nil",
 	"branch-on-not-nil",
@@ -64,7 +68,8 @@ char *branch_names[] = {
 	"illegal"
 };
 
-char *nd1_names[] = {
+char *nd1_names[] =
+{
 	"ILLOP",
 	"QIADD",
 	"QISUB",
@@ -75,7 +80,8 @@ char *nd1_names[] = {
 	"QIIOR"
 };
 
-char *nd2_names[] = {
+char *nd2_names[] =
+{
 	"QIEQL",
 	"QIGRP",
 	"QILSP",
@@ -86,7 +92,8 @@ char *nd2_names[] = {
 	"QISM1"
 };
 
-char *nd3_names[] = {
+char *nd3_names[] =
+{
 	"QIBND",
 	"QIBNDN",
 	"QIBNDP",
@@ -97,10 +104,12 @@ char *nd3_names[] = {
 	"QIPOP"
 };
 
-struct {
+struct
+{
 	char *name;
 	int value;
-} misc_inst[] = {
+} misc_inst[] =
+{
 	{ "", 0 },
 	{ "(CAR . M-CAR)", 0242 },
 	{ "(CDR . M-CDR)", 0243 },
@@ -407,11 +416,14 @@ void disass(unsigned int fefptr, unsigned int loc, int even, unsigned int inst)
 	int to;
 	unsigned int nlc;
 
-	if (!misc_inst_vector_setup) {
+	if (!misc_inst_vector_setup)
+	{
 		int i, index;
-		for (i = 0; i < 1024; i++) {
+		for (i = 0; i < 1024; i++)
+		{
 			if (misc_inst[i].name == 0)
 				break;
+			
 			index = misc_inst[i].value;
 			misc_inst_vector[index] = i;
 		}
@@ -423,83 +435,80 @@ void disass(unsigned int fefptr, unsigned int loc, int even, unsigned int inst)
 	reg = (inst >> 6) & 07;
 	delta = (inst >> 0) & 077;
 	printf("%011o%c %06o %s ", loc, even ? 'e':'o', inst, op_names[op]);
+	switch (op)
+	{
+		case 0: /* call */
+			printf("reg %s, ", reg_names[reg]);
+			printf("dest %s, ", dest_names[dest]);
+			printf("delta %o ", delta);
+			{
+				unsigned int v, tag;
+				
+				v = get(fefptr + delta);
+				tag = (v >> 24) & 077;
+				if (0)
+					printf("(tag%o %o) ", tag, v);
 
-	switch (op) {
-	case 0: /* call */
-		printf("reg %s, ", reg_names[reg]);
-		printf("dest %s, ", dest_names[dest]);
-		printf("delta %o ", delta);
-
-		{
-			unsigned int v, tag;
-			v = get(fefptr + delta);
-			tag = (v >> 24) & 077;
-			if (0) printf("(tag%o %o) ", tag, v);
-			switch (tag) {
-			case 3:
-				v = get(v);
-				showstr(v, 0);
-				break;
-			case 027:
-				break;
-			default:
-				v = get(v);
-				show_fef_func_name( v );
+				switch (tag)
+				{
+					case 3:
+						v = get(v);
+						showstr(v, 0);
+						break;
+					case 027:
+						break;
+					default:
+						v = get(v);
+						show_fef_func_name( v );
+				}
 			}
-		}
-//		nlc = (loc*2 + (even?0:1)) + delta;
-//		printf("+%o; %o%c ",
-//		       delta, nlc/2, (nlc & 1) ? 'o' : 'e');
-
-		break;
-	case 2: /* move */
-	case 3: /* car */
-	case 4: /* cdr */
-	case 5: /* cadr */
-		printf("reg %s, ", reg_names[reg]);
-		printf("dest %s, ", dest_names[dest]);
-		printf("delta %o ", delta);
-		break;
-	case 011: /* nd1 */
-		printf("%s ", nd1_names[dest]);
-		break;
-	case 012: /* nd2 */
-		printf("%s ", nd2_names[dest]);
-		break;
-	case 013: /* nd3 */
-		printf("%s ", nd3_names[dest]);
-		break;
-	case 014: /* branch */
-		printf("type %s, ", branch_names[dest]);
-		to = (inst & 03777) << 1;
-		to |= (inst & 0x8000) ? 1 : 0;
-
-		if (inst & 0400) {
-			to = inst & 01777;
-			to |= 03000;
-			to |= ~01777;
-		}
-
-		nlc = (loc*2 + (even?0:1)) + to;
-
-		if (to > 0) {
-			printf("+%o; %o%c ",
-			       to, nlc/2, (nlc & 1) ? 'o' : 'e');
-		} else {
-			printf("-%o; %o%c ",
-			       -to, nlc/2, (nlc & 1) ? 'o' : 'e');
-		}
-		break;
-	case 015: /* misc */
-		adr = inst & 0777;
-		if (adr < 1024 && misc_inst_vector[adr]) {
-			printf("%s ", misc_inst[ misc_inst_vector[adr] ].name);
-		} else {
-			printf("%o ", adr);
-		}
-		printf("dest %s, ", dest_names[dest]);
-		break;
+//			nlc = (loc*2 + (even?0:1)) + delta;
+//			printf("+%o; %o%c ",
+//			       delta, nlc/2, (nlc & 1) ? 'o' : 'e');
+			break;
+		case 2: /* move */
+		case 3: /* car */
+		case 4: /* cdr */
+		case 5: /* cadr */
+			printf("reg %s, ", reg_names[reg]);
+			printf("dest %s, ", dest_names[dest]);
+			printf("delta %o ", delta);
+			break;
+		case 011: /* nd1 */
+			printf("%s ", nd1_names[dest]);
+			break;
+		case 012: /* nd2 */
+			printf("%s ", nd2_names[dest]);
+			break;
+		case 013: /* nd3 */
+			printf("%s ", nd3_names[dest]);
+			break;
+		case 014: /* branch */
+			printf("type %s, ", branch_names[dest]);
+			to = (inst & 03777) << 1;
+			to |= (inst & 0x8000) ? 1 : 0;
+			if (inst & 0400)
+			{
+				to = inst & 01777;
+				to |= 03000;
+				to |= ~01777;
+			}
+			nlc = (loc*2 + (even ? 0 : 1)) + to;
+			if (to > 0)
+				printf("+%o; %o%c ", to, nlc/2, (nlc & 1) ? 'o' : 'e');
+			else
+				printf("-%o; %o%c ", -to, nlc/2, (nlc & 1) ? 'o' : 'e');
+			
+			break;
+		case 015: /* misc */
+			adr = inst & 0777;
+			if (adr < 1024 && misc_inst_vector[adr])
+				printf("%s ", misc_inst[ misc_inst_vector[adr] ].name);
+			else
+				printf("%o ", adr);
+			
+			printf("dest %s, ", dest_names[dest]);
+			break;
 	}
-
 	printf("\n");
 }
