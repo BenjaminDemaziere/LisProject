@@ -199,8 +199,8 @@ iob_sdl_key_event(int code, int extra)
 	if (extra & (17 << 10))
 	  iob_key_scan |= extra;
 
-	if (0)
-		printf("code 0%o, extra 0%o, scan 0%o\n", code, extra, iob_key_scan);
+	if (0) printf("code 0%o, extra 0%o, scan 0%o\n",
+		      code, extra, iob_key_scan);
 
 	iob_key_scan |= 0xffff0000;
 

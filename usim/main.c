@@ -42,7 +42,6 @@ extern int disk_init(const char *filename);
 extern int read_prom_files(void);
 extern int read_sym_files(void);
 extern int iob_init(void);
-extern int chaos_init(void);
 extern void iob_warm_boot_key(void);
 extern void run(void);
 
@@ -155,7 +154,7 @@ int main(int argc, char *argv[])
 	printf("CADR emulator v0.9\n");
 
 	show_video_flag = 1;
-	mouse_sync_flag = 1;
+	mouse_sync_flag = 0;
 
 	while ((c = getopt(argc, argv, "ab:c:dC:i:l:nmp:q:tT:sSw")) != -1) {
 		switch (c) {
@@ -199,32 +198,15 @@ int main(int argc, char *argv[])
 			trace = 1;
 			break;
 		case 'T':
-			switch (optarg[0])
-			{
-				case 'd':
-					trace_disk_flag = 1;
-					break;
-				case 'i':
-					trace_int_flag = 1;
-					break;
-				case 'o':
-					trace_io_flag = 1;
-					break;
-				case 'p':
-					trace_prom_flag = 1;
-					break;
-				case 'c':
-					trace_mcr_flag = 1;
-					break;
-				case 'm':
-					trace_mcr_labels_flag = 1;
-					break;
-				case 'n':
-					trace_net_flag = 1;
-					break;
-				case 'l':
-					trace_lod_labels_flag = 1;
-					break;
+			switch (optarg[0]) {
+			case 'd': trace_disk_flag = 1; break;
+			case 'i': trace_int_flag = 1; break;
+			case 'o': trace_io_flag = 1; break;
+			case 'p': trace_prom_flag = 1; break;
+			case 'c': trace_mcr_flag = 1; break;
+			case 'm': trace_mcr_labels_flag = 1; break;
+			case 'n': trace_net_flag = 1; break;
+			case 'l': trace_lod_labels_flag = 1; break;
 			}
 			break;
 		case 's':
@@ -249,8 +231,8 @@ int main(int argc, char *argv[])
 
 	read_sym_files();
 
-	iob_init();
-	chaos_init();
+	iob_init(); //gestion des entrée sortie
+
 
 #if 0
 	show_prom();

@@ -87,7 +87,7 @@ static unsigned char kbd_shift_map[KBD_SHIFT_MAP_LEN] = {
   'F', 'G', 'H', 'I', 'J', 'K', 'L',
   'M', 'N', 'O', 'P', 'Q', 'R', 'S',
   'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-  '{', '|', '}', '~'
+  '{', '|', '}', '~',
 };
 
 struct sdl_key_name_to_num {
@@ -426,7 +426,43 @@ void sdl_process_key(SDL_KeyboardEvent *ev, int keydown)
   int lmkey = -1;
   int lmcode = -1;
   unsigned char wantshift = 0;
-
+  
+  /*fr : Nous changeons le code de retours des touches du pav-num. */
+  /*en : We change the return code from the keys of the numpad. */
+	switch (ev->keysym.sym){
+		case 256:
+	  		ev->keysym.sym = 48;
+	  		break;
+		case 257:
+	  		ev->keysym.sym = 49;
+	  		break;
+	  	case 258:
+	  		ev->keysym.sym = 50;
+	  		break;
+	  	case 259:
+	  		ev->keysym.sym = 51;
+	  		break;
+	  	case 260:
+	  		ev->keysym.sym = 52;
+	  		break;
+	  	case 261:
+			ev->keysym.sym = 53;
+	  		break;
+	  	case 262:
+	  		ev->keysym.sym = 54;
+	  		break;
+	  	case 263:
+	  		ev->keysym.sym = 55;
+	  		break;
+	  	case 264:
+	  		ev->keysym.sym = 56;
+	  		break;
+	  	case 265:
+	  		ev->keysym.sym = 57;
+	  		break;
+	  	default:
+	  		break;
+	}
 
   /* Handle key mapping here, let iob only post the events. */
 
@@ -478,9 +514,9 @@ void sdl_process_key(SDL_KeyboardEvent *ev, int keydown)
 	  if (i >= SDLK_NUMLOCK && i <= SDLK_COMPOSE)
 	    break;
 	  allup = 0;
-#if KBD_DEBUG
+//#if KBD_DEBUG
 	  printf("- key %d (%s) is down\n", i, SDL_GetKeyName(i));
-#endif
+//#endif
 	  break;
 	}
       }
@@ -497,6 +533,7 @@ void sdl_process_key(SDL_KeyboardEvent *ev, int keydown)
 
   /* Look up keypress in key mapping */
   lmcode = kbd_shiftpress_to_lmcode(ev->keysym.sym);
+  
   if (lmcode != -1) {
 #if KBD_DEBUG
     printf("sdl_process_key(0%o, %d) [shift] => 0%o, old shifts 0%o",
@@ -530,7 +567,13 @@ void sdl_process_key(SDL_KeyboardEvent *ev, int keydown)
     return;
   } else {
     lmkey = kbd_keypress_to_lmkey(ev->keysym.sym);
+    
+    //printf("ev->keysym.sym : %d   lmkey: %d\n",ev->keysym.sym, lmkey);
+    
     if (lmkey != -1) {
+    
+   // printf("ok ma touche est validé\n");
+    
       /* Look up key in kb_new_table. */
       lmcode = kb_new_table[lmkey][0];
       wantshift = kb_new_table[lmkey][1];
@@ -547,7 +590,7 @@ void sdl_process_key(SDL_KeyboardEvent *ev, int keydown)
       else {
 	/* Messy case: LM wants other shifts than we have pressed */
 	int shkey = 0, oshift = kbd_shifts;
-
+	
 	/* All keys up. */
 	sdl_queue_all_keys_up();
 	/* Press the right key */
@@ -561,6 +604,9 @@ void sdl_process_key(SDL_KeyboardEvent *ev, int keydown)
 #endif
 	  iob_queue_key_event(shkey);
 	}
+	
+	//printf("shkey : %d      oshift : %d\n",shkey,oshift);
+	
 	/* press/lift the key itself */
 	iob_queue_key_event(lmcode|(!keydown)<<8);
 	if (shkey) {
@@ -614,6 +660,7 @@ iob_warm_boot_key()
 void
 kbd_init()
 {
+
 	init_sdl_key_names();
 
 	read_kbd_config();
