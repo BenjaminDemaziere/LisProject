@@ -1,10 +1,6 @@
 # Usim specifics
-diskmaker
-lmfs
-lod
-readmcr
 /usim/usim
-xx
+/usim/xx
 
 # Prerequisites
 *.d
