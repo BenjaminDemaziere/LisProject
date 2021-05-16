@@ -167,7 +167,6 @@ int getopt(int argc, char *argv[], char *optstring)
 		next = NULL;
 
 	optarg = NULL;
-
 	if (next == NULL || *next == _T('\0'))
 	{
 		if (optind == 0)
@@ -178,23 +177,22 @@ int getopt(int argc, char *argv[], char *optstring)
 			optarg = NULL;
 			if (optind < argc)
 				optarg = argv[optind];
+			
 			return EOF;
 		}
-
 		if (/*_tcscmp*/strcmp(argv[optind], _T("--")) == 0)
 		{
 			optind++;
 			optarg = NULL;
 			if (optind < argc)
 				optarg = argv[optind];
+			
 			return EOF;
 		}
-
 		next = argv[optind];
 		next++;		// skip past -
 		optind++;
 	}
-
 //	char c = *next++;
 //	char *cp = _tcschr(optstring, c);
 	c = *next++;
@@ -221,6 +219,5 @@ int getopt(int argc, char *argv[], char *optstring)
 			return _T('?');
 		}
 	}
-
 	return c;
 }

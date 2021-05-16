@@ -8,12 +8,10 @@
 #include <winsock2.h>
 #include <time.h>
 
-int
-strcasecmp(const char *s1, const char *s2)
+int strcasecmp(const char *s1, const char *s2)
 {
 	return stricmp(s1, s2);
 }
-
 
 #if defined(_MSC_VER) || defined(__BORLANDC__)
 #define EPOCHFILETIME (116444736000000000i64)
@@ -21,7 +19,8 @@ strcasecmp(const char *s1, const char *s2)
 #define EPOCHFILETIME (116444736000000000LL)
 #endif
 
-struct timezone {
+struct timezone
+{
     int tz_minuteswest; /* minutes W of Greenwich */
     int tz_dsttime;     /* type of dst correction */
 };
@@ -44,7 +43,6 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
         tv->tv_sec  = (long)(t / 1000000);
         tv->tv_usec = (long)(t % 1000000);
     }
-
     if (tz)
     {
         if (!tzflag)
@@ -55,7 +53,5 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
         tz->tz_minuteswest = _timezone / 60;
         tz->tz_dsttime = _daylight;
     }
-
     return 0;
 }
-
