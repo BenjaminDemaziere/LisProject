@@ -55,7 +55,6 @@ int read_prom_files(void)
 		prom_ucode[511-i] = ((uint64)prom[0][i] << (8*5)) | ((uint64)prom[1][i] << (8*4)) | ((uint64)prom[2][i] << (8*3)) |\
 			((uint64)prom[3][i] << (8*2)) | ((uint64)prom[4][i] << (8*1)) | ((uint64)prom[5][i] << (8*0));
 	}
-
 	return 0;
 }
 
@@ -69,14 +68,12 @@ int show_prom(void)
 		printf(" %02x %02x %02x %02x %02x %02x", prom[0][i], prom[1][i], prom[2][i], prom[3][i], prom[4][i], prom[5][i]);
 		printf("\n");
 	}
-
 	for (i = 0100; i < 0110; i++)
 	{
 		printf("%03o %016Lo", i, prom_ucode[i]);
 		printf(" %02x %02x %02x %02x %02x %02x", prom[0][i], prom[1][i], prom[2][i], prom[3][i], prom[4][i], prom[5][i]);
 		printf("\n");
 	}
-
 	printf("----\n");
 	return 0;
 }

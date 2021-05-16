@@ -203,10 +203,14 @@ unsigned int map_vtop(unsigned int virt, int *pl1_map, int *poffset)
 		/*  077000000, size = 210560(8) */
 
 		if (virt >= 077051757 && virt <= 077051763)
+		{
 			traceio("disk run light\n");
+		}
 		else
+		{
 			if (0)
 				traceio("tv: frame buffer %o\n", virt);
+		}
 
 		if (poffset)
 			*poffset = virt & 0377;

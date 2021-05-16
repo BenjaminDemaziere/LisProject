@@ -46,8 +46,6 @@ typedef struct DisplayState
 
 static DisplayState display_state;
 static DisplayState *ds = &display_state;
-static DisplayState display_state;
-static DisplayState *ds = &display_state;
 extern void sdl_process_key(SDL_KeyboardEvent *ev, int keydown);
 static int old_run_state;
 
