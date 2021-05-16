@@ -68,5 +68,4 @@ extern int breakpoint_set_count(int count);
 extern int tracelabel_set_mcr(char *arg);
 extern int read_phy_mem(int paddr, unsigned int *pv);
 extern int write_phy_mem(int paddr, unsigned int v);
-
-//unsigned int read_a_mem(int loc);
+unsigned int read_a_mem(int loc);
