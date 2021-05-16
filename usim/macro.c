@@ -410,7 +410,8 @@ struct
 static int misc_inst_vector[1024];
 static int misc_inst_vector_setup;
 
-void disass(unsigned int fefptr, unsigned int loc, int even, unsigned int inst)
+void
+disass(unsigned int fefptr, unsigned int loc, int even, unsigned int inst)
 {
 	int op, dest, reg, delta, adr;
 	int to;
@@ -512,3 +513,4 @@ void disass(unsigned int fefptr, unsigned int loc, int even, unsigned int inst)
 	}
 	printf("\n");
 }
+

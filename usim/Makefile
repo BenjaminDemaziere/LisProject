@@ -26,7 +26,7 @@ KEYBOARD = NEW
 
 #----------- code ------------
 
-USIM_SRC = main.c decode.c ucode.c disk.c iob.c chaos.c syms.c config.c
+USIM_SRC = main.c decode.c ucode.c disk.c iob.c syms.c config.c #chaos.c
 USIM_HDR = ucode.h config.h
 
 ifeq ($(DISPLAY), SDL)
@@ -85,26 +85,14 @@ endif
 USIM_OBJ = $(USIM_SRC:.c=.o) $(DISPLAY_SRC:.c=.o) $(KEYBOARD_SRC:.c=.o)
 SRC = $(USIM_SRC) $(DISPLAY_SRC) $(KEYBOARD_SRC)
 
-all: usim readmcr diskmaker lod lmfs
+all: usim  
 
 usim: $(USIM_OBJ)
-	$(CC) -o usim.exe $(LFLAGS) $(USIM_OBJ) $(USIM_LIBS)
+	$(CC) -o usim $(LFLAGS) $(USIM_OBJ) $(USIM_LIBS)
 
 run:
 	./usim >xx
 
-readmcr: readmcr.c
-	$(CC) $(CFLAGS) -o $@ $<
-
-diskmaker: diskmaker.c
-	$(CC) $(CFLAGS) -o $@ $<
-
-lmfs: lmfs.c
-	$(CC) $(CFLAGS) -o $@ $<
-
-lod: lod.c macro.c
-	$(CC) $(CFLAGS) -o $@ $<
-
 clean:
-	rm -f *.o usim lod readmcr diskmaker lmfs xx
+	rm -f *.o usim xx 
 	rm -f *~

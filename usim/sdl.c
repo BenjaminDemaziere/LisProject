@@ -44,43 +44,12 @@ typedef struct DisplayState
     int height;
 } DisplayState;
 
-#define MOUSE_EVENT_LBUTTON 1
-#define MOUSE_EVENT_MBUTTON 2
-#define MOUSE_EVENT_RBUTTON 4
-
 static DisplayState display_state;
 static DisplayState *ds = &display_state;
-
+static DisplayState display_state;
+static DisplayState *ds = &display_state;
 extern void sdl_process_key(SDL_KeyboardEvent *ev, int keydown);
-extern int mouse_sync_flag;
 static int old_run_state;
-
-static void sdl_send_mouse_event(void)
-{
-	int x, y, dx, dy, state, buttons;
-
-	state = SDL_GetRelativeMouseState(&dx, &dy);
-	buttons = 0;
-	if (state & SDL_BUTTON(SDL_BUTTON_LEFT))
-		buttons |= MOUSE_EVENT_LBUTTON;
-
-	if (state & SDL_BUTTON(SDL_BUTTON_MIDDLE))
-		buttons |= MOUSE_EVENT_MBUTTON;
-
-	if (state & SDL_BUTTON(SDL_BUTTON_RIGHT))
-		buttons |= MOUSE_EVENT_RBUTTON;
-
-	state = SDL_GetMouseState(&x, &y);
-	iob_sdl_mouse_event(x, y, dx, dy, buttons);
-}
-
-void sdl_mouse_poll(void)
-{
-  int state, x, y;
-
-  state = SDL_GetMouseState(&x, &y);
-  iob_sdl_mouse_poll(x, y);
-}
 
 static void sdl_update(DisplayState *ds, int x, int y, int w, int h)
 {
@@ -149,14 +118,6 @@ void sdl_refresh(void)
 				break;
 			case SDL_QUIT:
 				sdl_system_shutdown_request();
-				break;
-			case SDL_MOUSEMOTION:
-				sdl_send_mouse_event();
-				break;
-			case SDL_MOUSEBUTTONDOWN:
-			case SDL_MOUSEBUTTONUP:
-				/*SDL_MouseButtonEvent *bev = &ev->button;*/
-				sdl_send_mouse_event();
 				break;
 			case SDL_ACTIVEEVENT:
 				/* Switching between windows, assume all keys up */
@@ -320,7 +281,6 @@ static void sdl_display_init(void)
     sdl_resize(ds, video_width, video_height);
     sdl_update_caption();
     SDL_EnableKeyRepeat(250, 50);
-//  SDL_EnableUNICODE(1);
     sdl_setup_display();
     SDL_ShowCursor(0);
     atexit(sdl_cleanup);
@@ -334,9 +294,6 @@ int display_init(void)
 
 void display_poll(void)
 {
-	if (mouse_sync_flag)
-		sdl_mouse_poll();
-
 	sdl_refresh();
 	if (old_run_state != run_ucode_flag)
 	{

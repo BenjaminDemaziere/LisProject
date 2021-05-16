@@ -82,7 +82,8 @@ static void x11_process_key(XEvent *e, int updown)
 	{
 		ret = XLookupString(&e->xkey, (char *) buffer, 5, &keysym, &status);
 #if 1
-		printf("keysym %d, scancode %x, sym %s, state %x\n", keysym, e->xkey.keycode, buffer, e->xkey.state);
+		printf("keysym %d, scancode %x, sym %s, state %x\n",
+		       keysym, e->xkey.keycode, buffer, e->xkey.state);
 #endif
 		iob_sdl_key_event(keysym, extra);
 	}
@@ -244,7 +245,8 @@ void video_write(int offset, unsigned int bits)
 
 		for (i = 0; i < 32; i++)
 		{
-			tv_bitmap[offset + i] = (bits & 1) ? Black : White;
+			tv_bitmap[offset + i] =
+				(bits & 1) ? Black : White;
 			bits >>= 1;
 		}
 		XPutImage(display, window, gc, ximage, h, v, h, v, 32, 1);
@@ -288,10 +290,9 @@ int display_init(void)
     window = XCreateWindow(display, root, 0, 0, video_width, video_height, 0, color_depth, InputOutput, visual, \
 			CWBorderPixel | CWEventMask, &attr);
 
-    if (window == None)
-	{
-		fprintf(stderr, "usim: failed to open window.\n");
-		exit(-1);
+    if (window == None) {
+	fprintf(stderr, "usim: failed to open window.\n");
+	exit(-1);
     }
     if (!XStringListToTextProperty((char **) &window_name, 1, pWindowName))//0
 		pWindowName = NULL;   

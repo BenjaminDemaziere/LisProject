@@ -93,7 +93,7 @@ static unsigned char kbd_shift_map[KBD_SHIFT_MAP_LEN] =
 	'F', 'G', 'H', 'I', 'J', 'K', 'L',
 	'M', 'N', 'O', 'P', 'Q', 'R', 'S',
 	'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-	'{', '|', '}', '~'
+	'{', '|', '}', '~',
 };
 
 struct sdl_key_name_to_num
@@ -493,9 +493,46 @@ void sdl_process_key(SDL_KeyboardEvent *ev, int keydown)
 	int lmkey = -1;
 	int lmcode = -1;
 	unsigned char wantshift = 0;
+  
+	/*fr : Nous changeons le code de retours des touches du pav-num. */
+	/*en : We change the return code from the keys of the numpad. */
+	switch (ev->keysym.sym){
+		case 256:
+	  		ev->keysym.sym = 48;
+	  		break;
+		case 257:
+	  		ev->keysym.sym = 49;
+	  		break;
+	  	case 258:
+	  		ev->keysym.sym = 50;
+	  		break;
+	  	case 259:
+	  		ev->keysym.sym = 51;
+	  		break;
+	  	case 260:
+	  		ev->keysym.sym = 52;
+	  		break;
+	  	case 261:
+			ev->keysym.sym = 53;
+	  		break;
+	  	case 262:
+	  		ev->keysym.sym = 54;
+	  		break;
+	  	case 263:
+	  		ev->keysym.sym = 55;
+	  		break;
+	  	case 264:
+	  		ev->keysym.sym = 56;
+	  		break;
+	  	case 265:
+	  		ev->keysym.sym = 57;
+	  		break;
+	  	default:
+	  		break;
+	}
 
-	/* Handle key mapping here, let iob only post the events. */
-	/* Check if all keys are up - too expensive? */
+  /* Handle key mapping here, let iob only post the events. */
+  /* Check if all keys are up - too expensive? */
 	if (!keydown)
 	{
 		int statesize, i, allup = 1, mods = 0, shifts = 0;
@@ -695,6 +732,7 @@ void iob_warm_boot_key()
 
 void kbd_init()
 {
+
 	init_sdl_key_names();
 	read_kbd_config();
 	if (0)
